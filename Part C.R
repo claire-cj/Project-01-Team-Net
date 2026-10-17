@@ -16,14 +16,14 @@ ggplot(movies_clean,
        aes(x = available_globally,
            y = views)) +
   scale_y_log10() +
-  geom_violin() +
-  geom_boxplot(width = 0.1)
+  geom_violin(fill = "cyan") +
+  geom_boxplot(width = 0.05)
 
 ggplot(shows_clean,
        aes(x = available_globally,
            y = views)) +
   scale_y_log10() +
-  geom_violin() +
-  geom_boxplot(width = 0.1)
+  geom_violin(fill = "green") +
+  geom_boxplot(width = 0.05)
 
    
