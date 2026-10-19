@@ -176,3 +176,78 @@ ggplot(
   ) +
   theme_minimal()
 ```
+## Question 2 Approach
+
+For the first plot, we have created a ridge plot for a cursory look at the frequency of view counts across shows and movies on Netflix that are either globally available or region-locked. This plot enables us to find immediate patterns in the distribution of views that shows and movies get based on if the content is available globally or not.
+
+For the second plot, we take a closer look at the viewcounts via violin box plot. This way we can directly compare viewcounts between globally available and region-locked shows and movies via measures of central tendency such as median while still retaining an idea of the distributions that each category displays.
+
+## Question 2 Analysis
+```{r Question2 Analysis, echo=FALSE, warning=FALSE, message=FALSE}
+#install.packages("tidytuesdayR")
+#install.packages("ggplot2")
+#install.packages("scales")
+#install.packages("tidyverse")
+#install.packages("ggridges")
+library(ggridges)
+library(tidyverse)
+library(scales)
+library(ggplot2)
+library(tidytuesdayR)
+
+# Load datasets
+tuesdata <- tidytuesdayR::tt_load('2025-07-29')
+movies <- tuesdata$movies
+shows <- tuesdata$shows
+
+# Remove entries with missing viewcount and global availability data
+movies_clean <- movies %>%
+  filter(!is.na(available_globally)) %>%
+  filter(!is.na(views))
+
+shows_clean <- shows %>%
+  filter(!is.na(available_globally)) %>%
+  filter(!is.na(views))
+
+# Combine movie and show datasets
+q2_netflix <- bind_rows(
+  movies_clean %>% 
+    mutate(content_type = "Movie"),
+  shows_clean %>% 
+    mutate(content_type = "Show"))
+```
+
+```{r Question2 Figure1, echo=FALSE, warning=FALSE, message=FALSE}
+ggplot(q2_netflix,
+       aes(x = views,
+           y = available_globally,
+           fill = available_globally)) +
+  # Display view axis values using log-10 scale and change from scientific notation to commas
+  scale_x_log10(labels = label_comma()) +
+  geom_density_ridges(alpha = 0.5) +
+  guides(fill = "none") +
+  # Separate movies and shows into different graphs
+  facet_grid( . ~ content_type) +
+  labs(
+    title = "Frequency of Viewcounts for Globally Available and Region-locked Movies and Shows on Netflix",
+    x = "Views (log scale)",
+    y = "Global Availability"
+  )
+```
+
+```{r Question2 Figure2, echo=FALSE, warning=FALSE, message=FALSE}
+ggplot(q2_netflix,
+       aes(x = available_globally,
+           y = views)) +
+  # Display view axis values using log-10 scale and change from scientific notation to commas
+  scale_y_log10(labels = label_comma()) +
+  geom_violin(fill = "green3") +
+  geom_boxplot(width = 0.05) +
+  # Separate movies and shows into different graphs
+  facet_grid( . ~ content_type) +
+  labs(
+    title = "Comparison of Viewcounts for Globally Available and Region-locked Movies and Shows on Netflix",
+    x = "Global Availability",
+    y = "Views (log scale)"
+  )
+```
