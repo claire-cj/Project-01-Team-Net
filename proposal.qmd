@@ -1,6 +1,6 @@
 ---
-title: "Proposal title"
-subtitle: "Proposal"
+title: "Netflix Viewing Performance"
+subtitle: "What have we been watching on Netflix"
 format: html
 editor: visual
 ---
@@ -16,16 +16,46 @@ library(tidyverse)
 ```{r}
 #| label: load-dataset
 #| message: false
+movies <- readr::read_csv('https://raw.githubusercontent.com/rfordatascience/tidytuesday/main/data/2025/2025-07-29/movies.csv')
+shows <- readr::read_csv('https://raw.githubusercontent.com/rfordatascience/tidytuesday/main/data/2025/2025-07-29/shows.csv')
+
+# Dataset dimensions
+n_movies_rows <- nrow(movies)
+n_movies_cols <- ncol(movies)
+n_shows_rows <- nrow(shows)
+n_shows_cols <- ncol(shows)
 ```
-
-A brief description of your dataset including its provenance, dimensions, etc. as well as the reason why you chose this dataset.
-
-Make sure to load the data and use inline code for some of this information.
+The dataset we selected for this project is "what we watched on Netflix". We selected this dataset because we are curious about some hidden information about Netflix movies and shows. It comes from the reports Netflix puts out on its own where they share how many hours people spent watching each show and movie. They have been releasing these every six months since mid 2023. We are using four of these reports together so our data ranges from the second half of 2023 to the first half of 2025. The movies dataset has `r n_movies_rows` rows and `r n_movies_cols` columns, while the shows dataset has `r n_shows_rows` rows and `r n_shows_cols` columns.
 
 ## Questions
 
-The two questions you want to answer.
+Question 1: Does newer content get more views compared to the older content on Netflix?
+
+Question 2: Does global availability get more views than regional restriction?
+
 
 ## Analysis plan
 
--   A plan for answering each of the questions including the variables involved, variables to be created (if any), external data to be merged in (if any).
+### Introduction for question 1
+Our First question is whether newer content gets more views than older content on Netflix. People might assume that  newer movies and shows receive more attention because they are more recently released, but we are curious about whether the data can support this assumption. We want to find out if the age of the content is related to its popularity on Netflix.
+
+### Approach for question 1
+To answer this question, we will calculate how long each movie or show has been available based on its release date and  the report date. We will treat the title in each report as an observation(even if the title is repeated) and calculate its age based on that report. We will further examine the data to confirm how the release date and runtime variable should be interpreted, especially for shows. 
+
+Then, we will compare the age of the content with its number of views. Since the number of views might be highly skewed, we will consider using a log scale if it helps us see the differences between titles. We also plan to compare hours viewed with views because views are related to runtime and may not fully represent total viewing time. 
+We plan to use a scatter plot to show the relationship between content age and views and add a trend line to make the pattern easier to see. We will also consider whether movies and shows have different patterns. During the data processing stage, we might examine titles that were released a long time ago but are relatively new on Netflix, since they may show a different pattern.
+
+### Introduction for question 2
+Our second question is whether globally available content receives more views than content that is only available in some regions. We usually know whether a movie or show is available on Netflix, but we may not think about whether it is available globally. We are curious about whether global availability is related to the viewing performance of movies and shows.
+
+### Approach for question 2
+To answer this question, we will divide the data into two groups based on whether it is globally available or not. We will examine the available_globally data during the data processing stage to determine how global availability can be appropriately categorized and whether the two groups provide a meaningful comparison. We will also check the number of titles in each category before creating the visualizations.
+
+Then, we will compare the number of views and hours viewed between the two groups. We plan to use box plots to show the distributions and compare the viewing performance of globally available and regionally available content. If the data is highly skewed, we will consider using a log scale for views and hours viewed.
+
+We will also consider movies and shows separately because they might have different viewing patterns. The final visualization approach will be determined after we examine the data and the distribution of each category.
+
+## Discussion
+We hypothesize that content that is more recent will have more views than content that is older. This is because newer movies and shows receive the most immediate marketing as opposed to older media, such as in Netflix’s suggestions. An outcome supporting this would manifest as a trend line following the data that shows an inverse relationship between a piece of content’s viewership and its age. 
+
+We also hypothesize that content that is globally available receives more views than content that is locked to a specific region. Media that is accessible to the entire planet would be available to a lot more people, meaning potentially a much bigger audience. If proven right, the outcome of the data would be the box plots involving globally available content to have higher medians or boxes than the plots involving region-locked content. We expect there to be smaller issues in data wrangling, but a larger issue in the inherent difference between movies and shows. The fundamental differences in their presentation and formatting means there may be changes in viewership that can be attributed more to a piece of media being episodic rather than one continuous feature.
