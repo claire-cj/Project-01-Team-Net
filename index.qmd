@@ -9,6 +9,17 @@ output: html_document
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
+##Introduction
+
+For this project we used the "what we watched on Netflix" dataset from TidyTuesday(week of July 29,2025).Netflix releases a report every six months that shows how many hours people spent watching each movie and show.We put four of these reports together so our data covers the second half of 2023 to the first half of 2025.
+
+The data comes in two files,one for movies and one for shows and both have the same eight columns.These include the title,the report period,the release date on Netflix,whether the title was available globally,the hours viewed and the runtime.There is also a views column,which is hours viewed divided by runtime,so it is a rough count of how many times a title was watched.Each row is one title in one report so the same title can show up more than once. 
+
+##Question 1:Does Newer content Get More Views on Netflix?
+
+##Introduction
+Our first question was whether newer movies and shows get more views than older ones.We were curious about this because newer titles might get more attention,especially when Netflix promotes them.To answer it we used the release date and the report period to find how old each title was and then compared the age to views.Since a few titles have very large numbers of views we used a log scale.We also looked at movies and shows separately.
+
 ## Question 1 Approach
 
 We use a scatter plot to present the relationship between content age on Netflix and views. This plot is suitable because it can display two numerical variables and allows us to identify patterns in the data. We also add a smooth trend line to show the relationship and use facets to compare movies and shows separately.
@@ -176,6 +187,21 @@ ggplot(
   ) +
   theme_minimal()
 ```
+
+##Discussion
+Overall the plots support our hypothesis that newer content gets more views.In figure 1 the trend lines for both movies and shows drop quickly in the first two to three years.Figure 2 shows the same pattern.The median for movies in the 0 to 1 year group is around 5 million views and it goes down to about 100,000 for movies that are 10 or more years old.
+
+Shows are a little different at the older end.Their trend line flattens after about three years and then goes up after about 10 years and the 10+ year median is higher than the 3 to 10 year medians.This might be because only a few very old shows are still on Netflix and those are probably popular ones that people like to rewatch.Still we cannot say from these figures alone that older shows get more views than older movies.
+
+We removed the rows with missing release_date values which left about 6,700 movies and 13,700 shows.Both figures have fewer points for titles older than 10 years,so the lines in that range may be strongly affected by a small number of observations.This makes the rise in the show trend line less reliable.
+
+Another limit is that age here means the time since the Netflix release not the original release.An older movie that only recently came to Netflix would count as new which might change the results.So newer content does get more views in general but the pattern for older titles is less clear.
+
+##Question 2:Does Global Availability Lead to More Views?
+
+##Introduction
+Our second question was whether titles that are available globally get more views than titles that are only available in some regions.People usually know whether something is on Netflix but they may not think about where it is available.A global title can reach a much bigger audience so we expected it to get more views.To test this we split the titles into two groups using the available_globally column and compared their views on a log scale.We made separate plots for movies and shows.
+
 ## Question 2 Approach
 
 For the first plot, we have created a ridge plot for a cursory look at the frequency of view counts across shows and movies on Netflix that are either globally available or region-locked. This plot enables us to find immediate patterns in the distribution of views that shows and movies get based on if the content is available globally or not.
@@ -251,3 +277,10 @@ ggplot(q2_netflix,
     y = "Views (log scale)"
   )
 ```
+
+##Discussion
+The plots support our hypothesis.In Figure 1 the median views for globally available movies is around 700,000 compared to about 200,000 for regional movies.Figure 2 looks similar with a median of about 800,000 for global shows and about 300,000 for regional shows.In both figures the box for global titles sits higher than the box for regional titles.
+
+The regional groups also have a lot of titles near the bottom of the scale around 100,000 views.This is the long flat part on the left violin in each plot.Even so some regional titles still reach very high views and the outliers in the regional movie group go up to tens of millions.So being regional does not mean a title cannot do well it just makes it less likely.
+
+We need to be careful about saying global availability is the cause.Global titles may also be the ones Netflix promotes the most such as its own originals so promotion could explain part of the difference.Each title can also appear in more than one report so the observations are not fully independent.The two groups may not be the same size either so a smaller group could look different just because it has fewer points.So global titles do get more views in general but these figures alone cannot tell us why.
